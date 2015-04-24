@@ -83,8 +83,6 @@ def load_dummy_schools():
 
 
 def insert_school(school):
-    """
-    """
     school_code = int(school['SCHOOL CODE'])
     if school_exists(school_code):
         return
@@ -92,14 +90,16 @@ def insert_school(school):
     conn = sqlite3.connect(IMMUNIZATION_DATABASE_NAME)
     cur = conn.cursor()
 
-    cur.execute("INSERT INTO schools VALUES (?, ?, ?, ?, ?, ?);", 
+    school_row = (
         school_code,
         school['SCHOOL NAME'],
         school['PUBLIC SCHOOL DISTRICT'],
         1 if school['PUBLIC/  PRIVATE'] == 'PUBLIC' else 0,
         school['CITY'],
-        school['COUNTY'])
-    
+        school['COUNTY']
+    )
+
+    cur.execute("INSERT INTO schools VALUES (?, ?, ?, ?, ?, ?);", school_row)
     
     conn.commit()
     cur.close()

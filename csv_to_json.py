@@ -49,7 +49,7 @@ def main():
 
     print("Inserting the CSV data into the SQLite database")
     parsed_data = csvfile_in(options.in_file)
-    sql_insert_csvdump(parsed_data, 'K', 2014)
+    sql_insert_csvdump(parsed_data, options.grade, options.year)
     print('done')
 
 
