@@ -1,0 +1,90 @@
+@media screen and (min-width: 480px) {
+  
+  /******************************* 
+  TWO COLUMN LAYOUT
+  *******************************/
+  
+  #primary {
+    width: 50%;
+    float: left;
+  }
+  
+  #secondary {
+    width: 40%;
+    float: right;
+  }
+  
+  /******************************* 
+  3*5 = 15%
+  100-15 = 85%
+  85%/3 = 28.3333333...
+  *******************************/
+  
+  /******************************* 
+  PAGE PORTFOLIO
+  *******************************/
+  
+  #gallery li {
+    width: 28.3333%;
+  }
+  
+  #gallery li:nth-child(4n) {
+    clear: left;
+  }
+  
+ /******************************* 
+  PAGE PORTFOLIO
+  *******************************/
+  
+  #sponsorbuttongallery li {
+    width: 28.3333%;
+  }
+  
+  #sponsorbuttongallery li:nth-child(4n) {
+    clear: left;
+  }
+
+  form {
+    max-width: 480px;
+  }
+  
+  
+}
+
+@media screen and (min-width: 660px) {
+  
+  /******************************* 
+  HEADER
+  *******************************/
+  
+  nav {
+    background: none;
+    float: right;
+    font-size: 1.125em;
+    margin-right: 5%;
+    text-align: right;
+    width: 45%;
+  }
+  
+  #logo {
+    float: left;
+    margin-left: 5%;
+    text-align: left;
+    width: 45%;
+  }
+  
+  h1 {
+    font-size: 2.5em;
+  }
+  
+  h2 {
+    font-size: 0.825em;
+    margin-bottom: 20px;
+  }
+  
+  header {
+    border-bottom: 5px solid #1d73ba;
+    margin-bottom: 60px;
+  }
+  
+}

@@ -1,0 +1,377 @@
+/******************************* 
+  GENERAL
+*******************************/
+
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+#wrapper {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 0 5%;
+}
+
+a {
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+h3 {
+  margin: 0 0 1em 0;
+}
+
+
+
+
+
+/******************************* 
+  HEADING
+*******************************/
+
+header {
+  float: left;
+  margin: 0 0 30px 0;
+  padding: 5px 0 0 0;
+  width: 100%
+}
+
+#logo {
+  text-align: center;
+  margin: 0
+}
+
+a {
+  color: #6ab47b;
+}
+
+h1 {
+  font-family: 'Changa One', sans-serif;
+  margin: 15px 0;
+  font-size: 1.75em;
+  font-weight: normal;
+  line-height: 0.8em;
+}
+
+h2 {
+  font-size: 0.75em;
+  margin: -5px 0 0;
+  font-weight: normal;
+}
+
+
+/******************************* 
+  NAVIGATION
+*******************************/
+
+nav {
+  text-align: center;
+  padding: 10px 0;
+  margin: 20px 0 0;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0 10px; 
+  padding: 0;
+}
+
+nav li {
+  display: inline-block; 
+}
+
+nav a {
+  font-weight: 800;
+  padding: 15px 10px;
+}
+
+/******************************* 
+  FOOTER
+*******************************/
+
+footer {
+  font-size: 0.75em;
+  text-align: center;
+  clear: both;
+  padding-top: 50px;
+  color: #ccc;
+}
+
+.social-icon {
+  width: 20px;
+  height: 20px;
+  margin: 0 5px;
+}
+
+
+
+/******************************* 
+  PAGE: PORTFOLIO
+*******************************/
+
+#gallery {
+  margin: 0;
+  padding: 0;
+  list-style: none;   
+}
+
+#gallery li {
+  float: left;
+  width: 45%;
+  margin: 2.5%;
+  background: #f5f5f5;
+  color: #bdc3c7;
+  text-align: center;
+}
+
+#gallery li a p {
+  margin: 0;
+  padding: 5%;
+  font-size: 0.75em;
+  color: #bdc3c7;
+}
+
+/******************************* 
+  PAGE: FRONT PAGE
+*******************************/
+
+#frontpage h3 {
+  font-family: 'Changa One', sans-serif;
+  font-size: 7em;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+#frontpage h4 {
+  font-size: 1em;
+  text-align: center;
+  margin-bottom: 35px;
+  margin-top: 0;
+  padding: 0;
+}
+
+
+/******************************* 
+  PAGE: SPONSOR PAGE
+*******************************/
+
+#sponsorpage h3 {
+  font-size: 3em;
+  text-align: center;
+  margin-bottom: 35px;
+  margin-top: 0;
+  padding: 0;
+}
+
+#sponsorpage h4 {
+  font-size: 2em;
+  text-align: center;
+  margin-bottom: 35px;
+  margin-top: 0;
+  padding: 0;
+}
+
+
+/******************************* 
+  PAGE: SPONSOR PAGE
+*******************************/
+
+#sponsorbuttongallery {
+  margin: 0;
+  padding: 0;
+  list-style: none;   
+}
+
+#sponsorbuttongallery li {
+  float: left;
+  width: 45%;
+  margin: 2.5%;
+
+  color: #bdc3c7;
+  text-align: center;
+}
+
+#sponsorbuttongallery li a p {
+  margin: 0;
+  padding: 5%;
+  font-size: 0.75em;
+  color: #bdc3c7;
+}
+
+
+/******************************* 
+  PAGE: ABOUT
+*******************************/
+
+.profile-photo {
+  display: block;
+  max-width: 150px;
+  margin: 0 auto 30px;
+  border-radius: 100%;
+}
+
+
+/******************************* 
+  COLORS
+*******************************/
+
+header {
+  background: #2388db;
+  border-color: #1d73ba;
+}
+
+h1, h2 {
+  color: #fff;
+}
+
+h3 {
+    color: #2388db;
+
+}
+
+nav {
+  background: #1d73ba;
+}
+
+nav a, nav a:visited {
+  color: #fff;
+}
+
+nav a.selected, nav a:hover {
+  color: #1d73ba;
+}
+
+body {
+  background-color: #fff;
+  color: #999;
+}
+
+/******************************* 
+  BUTTONS
+*******************************/
+
+.myButton {
+  background-color:#2388db;
+  -moz-border-radius:28px;
+  -webkit-border-radius:28px;
+  border-radius:28px;
+  border:1px solid #2388db;
+  display:inline-block;
+  cursor:pointer;
+  color:#ffffff;
+  font-family:Arial;
+  font-size:17px;
+  padding:16px 31px;
+  text-decoration:none;
+  text-shadow:0px 1px 0px #2f6627;
+  margin-bottom: 50px;
+}
+.myButton:hover {
+  background-color:#1d73ba;
+}
+.myButton:active {
+  position:relative;
+  top:1px;
+}
+
+.sponsorbutton {
+  background-color:transparent;
+  border:1px solid #000000;
+  display:inline-block;
+  cursor:pointer;
+  color:#000000;
+  font-family:arial;
+  font-size:17px;
+  padding:7px 25px;
+  text-decoration:none;
+  text-shadow:0px 0px 0px #000000;
+}
+.sponsorbutton:hover {
+  background-color:transparent;
+}
+.sponsorbutton:active {
+  position:relative;
+  top:1px;
+}
+
+/******************************* 
+  FORM
+*******************************/
+
+form {
+  max-width: 300px;
+  margin: 10px auto;
+  padding: 10px 20px;
+  background: #f4f7f8;
+  border-radius: 8px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"],
+input[type="datetime"],
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="time"],
+input[type="url"],
+textarea,
+select {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  font-size: 16px;
+  height: auto;
+  margin: 0;
+  outline: 0;
+  padding: 15px 0 15px 0;
+  width: 100%;
+  background-color: #e8eeef;
+  color: #8a97a0;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
+  margin-bottom: 30px;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  margin: 0 4px 8px 0;
+}
+
+button {
+  padding: 19px 39px 18px 39px;
+  color: #FFF;
+  background-color: #4bc970;
+  font-size: 18px;
+  text-align: center;
+  font-style: normal;
+  border-radius: 5px;
+  width: 100%;
+  border: 1px solid #3ac162;
+  border-width: 1px 1px 3px;
+  box-shadow: 0 -1px 0 rgba(255,255,255,0.1) inset;
+  margin-bottom: 10px;
+}
+
+#formpages h2 {
+  color: #fff;
+}
+
+select {
+  padding: 6px;
+  height: 32px;
+  border-radius: 2px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+label.light {
+  font-weight: 300;
+  display: inline;
+}
