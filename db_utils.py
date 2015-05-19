@@ -4,7 +4,6 @@
 # intended for SQLite 3
 #
 
-
 import sqlite3
 
 IMMUNIZATION_DATABASE_NAME = 'immune.db'
@@ -25,7 +24,7 @@ SQL_CREATE_TABLE_RECORDS = "CREATE TABLE records (\
         school                     INTEGER references schools(school_code),\
         grade                                                         TEXT,\
         year                                                       INTEGER,\
-        reported      BOOLEAN NOT NULL CHECK (reported IN (0,1)) NOT NULL,\
+        reported       BOOLEAN NOT NULL CHECK (reported IN (0,1)) NOT NULL,\
         enrollment                                                 INTEGER,\
         num_conditional                                            INTEGER,\
         num_DTP                                                    INTEGER,\
@@ -43,7 +42,6 @@ SQL_CREATE_TABLE_RECORDS = "CREATE TABLE records (\
 
 SQL_DROP_TABLE_SCHOOLS = "DROP TABLE IF EXISTS schools;"
 SQL_DROP_TABLE_RECORDS = "DROP TABLE IF EXISTS records;"
-
 
 def create_tables():
     conn = sqlite3.connect(IMMUNIZATION_DATABASE_NAME)
@@ -93,17 +91,21 @@ def insert_school(school):
     conn = sqlite3.connect(IMMUNIZATION_DATABASE_NAME)
     cur = conn.cursor()
 
-    school_row = (
-        school_code,
-        school['SCHOOL NAME'],
-        school['PUBLIC SCHOOL DISTRICT'],
-        1 if school['PUBLIC/  PRIVATE'] == 'PUBLIC' else 0,
-        school['CITY'],
-        school['COUNTY']
-    )
+    school_row = {
+        'school_code' : school_code,
+        'school_name' : school['SCHOOL NAME'],
+        'district' : school['PUBLIC SCHOOL DISTRICT'],
+        'is_public' : 1 if school['PUBLIC/  PRIVATE'] == 'PUBLIC' else 0,
+        'city' : school['CITY'],
+        'county' : school['COUNTY'],
+        'address' : None,
+        'zip' : None
+    }
 
-    # TODO: change from '?' to named placeholders
-    cur.execute("INSERT INTO schools VALUES (?, ?, ?, ?, ?, ?);", school_row)
+    cur.execute("""
+        INSERT INTO schools (school_code, school_name, district, is_public, address, city, zip, county) 
+        VALUES (:school_code, :school_name, :district, :is_public, :address, :city, :zip, :county);""", 
+        school_row)
     
     conn.commit()
     cur.close()
@@ -225,7 +227,7 @@ def cleanInt(dirty):
 
 import sys, doctest, argparse
 def main():
-    doctest.testmod()
+    # doctest.testmod()
     parser = argparse.ArgumentParser(prog='db_utils')
     parser.add_argument('action', choices=['create', 'count', 'drop', 'dummy', 'select', 'top'])
     args = parser.parse_args()

@@ -1,13 +1,13 @@
-
-
 #!/usr/bin/python
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 # csv_to_json.py
 # slurp in the csv file and output the results as JSON
 #
 
 from StringIO import StringIO
 import csv, json, optparse
+import sys
+
 
 from db_utils import insert_school, insert_record
 
@@ -17,15 +17,21 @@ def csvfile_in(csvfilename):
     csv_dump = []
     with open(csvfilename, 'rb') as csvfile:
         raw_dump = csv.DictReader(csvfile)
-        # raw_dump = csv.reader(csvfile, delimiter=',', quotechar='|')
         for row in raw_dump:
             csv_dump.append(dict((k, v.decode('utf-8', 'replace')) for k, v in row.items()))
     return csv_dump
 
 def sql_insert_csvdump(csv_dump, grade, year):
+    inserted = 0
     for row in csv_dump[1:]:    # Skip first row, which is the column headers
         insert_school(row)
         insert_record(row, grade, year)
+        inserted = inserted+1
+        if inserted%100 == 0:
+            sys.stdout.write('.')
+            sys.stdout.flush()
+    print('')
+    return inserted
 
 
 import sys, doctest
@@ -47,10 +53,10 @@ def main():
         parser.print_help()
         parser.error("a valid grade must be given, one of: "+str(GRADES))
 
-    print("Inserting the CSV data into the SQLite database")
+    print("Inserting the CSV data into the SQLite3 database")
     parsed_data = csvfile_in(options.in_file)
-    sql_insert_csvdump(parsed_data, options.grade, options.year)
-    print('done')
+    rcount = sql_insert_csvdump(parsed_data, options.grade, options.year)
+    print('Done; inserted '+str(rcount)+' records')
 
 
 if __name__ == '__main__':
