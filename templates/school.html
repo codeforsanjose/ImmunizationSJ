@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block body %}
+<section id="formpages">
+    <h1>{{ school.school_name }}</h1>
+    <dl>
+        <dt>District:</dt><dd>{{ school.district }}</dd>
+        <dt>City:</dt><dd>{{ school.city }}</dd>
+        <dt>Public school?</dt><dd>{{ "yes" if school.is_public == 1 else "no"  }}</dd>
+        <dt>Record year:</dt><dd>{{ school.year }}</dd>
+        <dt>Grade:</dt><dd>{{ "Kindergarten" if school.grade == 'K' else school.grade }}</dd>
+        <dt>Enrollment:</dt><dd>{{ school.enrollment }}</dd>
+        <dt>Up to date:</dt><dd>{{ '{:.2%}'.format( school.num_up_to_date/school.enrollment ) }}</dd>
+        <dt>Polio:</dt><dd>{{ '{:.2%}'.format( school.num_polio/school.enrollment ) }}</dd>
+    </dl>
+</section>
+{% endblock %}

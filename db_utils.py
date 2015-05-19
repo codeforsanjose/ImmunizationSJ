@@ -1,4 +1,5 @@
-
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 #
 # intended for SQLite 3
 #
@@ -13,7 +14,9 @@ SQL_CREATE_TABLE_SCHOOLS = "CREATE TABLE schools (\
         school_name                                         TEXT NOT NULL,\
         district                                            TEXT NOT NULL,\
         is_public    BOOLEAN NOT NULL CHECK (is_public IN (0,1)) NOT NULL,\
+        address                                                      TEXT,\
         city                                                TEXT NOT NULL,\
+        zip                                                          TEXT,\
         county                                              TEXT NOT NULL\
     );"
 
@@ -99,6 +102,7 @@ def insert_school(school):
         school['COUNTY']
     )
 
+    # TODO: change from '?' to named placeholders
     cur.execute("INSERT INTO schools VALUES (?, ?, ?, ?, ?, ?);", school_row)
     
     conn.commit()
@@ -151,6 +155,7 @@ def insert_record(record, grade, year):
                 cleanInt(record['# VARI'])
             )
 
+    # TODO: change from '?' to named placeholders
     ret = cur.execute("INSERT INTO records "
             + "(school, grade, year, reported, enrollment, num_conditional, num_DTP, num_health_care_practitioner_counseled_PBE, num_HEPB, num_MMR, num_PBE, num_PME, num_polio, num_pre_Jan_PBE, num_religious_PBE, num_up_to_date, num_vari ) "
             + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
@@ -180,6 +185,25 @@ def select_all():
     cur.close()
     conn.close()
 
+def select_top():
+    conn = sqlite3.connect(IMMUNIZATION_DATABASE_NAME)
+    cur = conn.cursor()
+    
+    print("SCHOOLS (10):")
+    print("="*80)
+    for row in cur.execute("SELECT * FROM schools LIMIT 10;"):
+        print(str(row)+"\n")
+
+    print("RECORDS (10):")
+    print("="*80)
+    for row in cur.execute("SELECT * FROM records LIMIT 10;"):
+        print(str(row)+"\n")
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
 def select_count():
     conn = sqlite3.connect(IMMUNIZATION_DATABASE_NAME)
     cur = conn.cursor()
@@ -203,7 +227,7 @@ import sys, doctest, argparse
 def main():
     doctest.testmod()
     parser = argparse.ArgumentParser(prog='db_utils')
-    parser.add_argument('action', choices=['create', 'count', 'drop', 'dummy', 'select'])
+    parser.add_argument('action', choices=['create', 'count', 'drop', 'dummy', 'select', 'top'])
     args = parser.parse_args()
     if args.action == 'create':
         create_tables()
@@ -215,6 +239,8 @@ def main():
         load_dummy_schools()
     elif args.action == 'select':
         select_all()
+    elif args.action == 'top':
+        select_top()
 
 
 if __name__ == '__main__':

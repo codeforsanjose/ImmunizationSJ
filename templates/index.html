@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block body %}
+    <ul id="gallery">
+      <li>
+        <a href="img/numbers-01.jpg">
+          <img src="img/" alt="">
+          <p><b>Description</b><br/>text</p>
+        </a>
+      </li>
+      <li>
+        <a href="img/numbers-02.jpg">
+          <img src="img/" alt="">
+          <p><b>Description</b><br/>text</p>
+        </a>
+      </li>
+      <li>
+        <a href="img/numbers-06.jpg">
+          <img src="img/" alt="">
+          <p><b>Description</b><br/>text</p>
+        </a>
+      </li>
+    </ul>
+     <section id="formpages">
+        <center> 
+          <h2>.</h2>
+        </center>  
+        <form action="/search" method=post>
+          <center><h3>Search school</h3></center>
+          <label for="first">Search</label>
+          <input type=text name=search value="{{ request.form.search}}"></br>
+          <button type="submit">Search</button> 
+        </form>
+      </section>
+{% endblock %}
+     

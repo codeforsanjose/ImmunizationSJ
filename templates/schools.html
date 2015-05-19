@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block body %}
+  <table class="schools">
+    <thead>
+      <tr>
+        <td>Name
+        <td>Type
+        <td>District
+        <td>City
+        <td>County
+      </tr>
+    </thead>
+    <tbody>
+      {% for school in schools %}
+        <tr>
+          <td><a href="{{ url_for('get_record', school_code=school.school_code) }}">{{ school.school_name }}</a>
+          <td>{{ "public" if school.is_public == 1 else "private"  }}
+          <td>{{ school.district }}
+          <td>{{ school.city }}
+          <td>{{ school.county }}
+        </tr>
+      {% else %}
+        <tr>
+          <td><em>Unbelievable. No schools here so far</em></td><td></td></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
