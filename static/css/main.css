@@ -366,6 +366,11 @@ button {
   color: #fff;
 }
 
+#formpages h1 {
+  color: #2388db;
+  text-align: center;
+}
+
 select {
   padding: 6px;
   height: 32px;
