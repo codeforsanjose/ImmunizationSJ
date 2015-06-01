@@ -10,7 +10,16 @@
         <dt>Grade:</dt><dd>{{ "Kindergarten" if school.grade == 'K' else school.grade }}</dd>
         <dt>Enrollment:</dt><dd>{{ school.enrollment }}</dd>
         <dt>Up to date:</dt><dd>{{ '{:.2%}'.format( school.num_up_to_date/school.enrollment ) }}</dd>
+        <dt>Personal Belief Exemptions:</dt><dd>{{ '{:.2%}'.format( school.num_religious_PBE/school.enrollment ) }}</dd>
+        <dt>Personal Medical Exemptions:</dt><dd>{{ '{:.2%}'.format( school.num_PME/school.enrollment ) }}</dd> 
+        <dt>Pre-Jan. Personal Belief Exemptions:</dt><dd>{{ '{:.2%}'.format( school.num_pre_Jan_PBE/school.enrollment ) }}</dd>
+        <dt>Religious Personal Belief Exemptions:</dt><dd>{{ '{:.2%}'.format( school.num_religious_PBE/school.enrollment ) }}</dd>
+        <dt>Hepatitis B:</dt><dd>{{ '{:.2%}'.format( school.num_HEPB/school.enrollment ) }}</dd>
         <dt>Polio:</dt><dd>{{ '{:.2%}'.format( school.num_polio/school.enrollment ) }}</dd>
+        <dt>Measles, Mumps, and Rubella (MMR):</dt><dd>{{ '{:.2%}'.format( school.num_MMR/school.enrollment ) }}</dd>
+        <dt>Diphtheria, Pertussis (whooping cough), and Tetanus (DTP):</dt><dd>{{ '{:.2%}'.format( school.num_DTP/school.enrollment ) }}</dd>
+        
+        
     </dl>
 </section>
 {% endblock %}

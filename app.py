@@ -158,7 +158,7 @@ def get_school_by_advanced():
 @app.route('/search', methods=['GET','POST'])
 def search():
 
-    searchables = ['city','district','county']
+    searchables = ['school_name','city','district','county']
     search_input = request.form['search']
 
     if search_input is not None:
@@ -168,8 +168,8 @@ def search():
     args = {}
 
     for metric in searchables:
-        where.append(metric+"=:"+metric)
-        args[metric] = search_input
+        where.append(metric+" like :"+metric)
+        args[metric] = '%'+search_input+'%'
 
     con = get_db()
     con.row_factory = dict_factory
@@ -178,6 +178,10 @@ def search():
     print(querystring)
     cur.execute(querystring, args)
     res = cur.fetchall()
+
+    if len(res) > 5000:
+        flash('Too many search results!')
+        return redirect(url_for('get_records'))
 
     if request.args.get('json') is not None:
         return jsonify({'records': res})
