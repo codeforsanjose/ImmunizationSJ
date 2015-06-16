@@ -1,7 +1,70 @@
 {% extends "layout.html" %}
 {% block body %}
-<section id="formpages">
+<section>
     <h1>{{ school.school_name }}</h1>
+</section>
+<section>
+    <canvas id="canvas" height="450" width="600"></canvas>
+    <script>
+    (function (){
+        var enrollment = {{ school.enrollment }};
+        var kvp = {
+            "up to date" : {{ school.num_up_to_date }},
+            "religious exemptions" : {{ school.num_religious_PBE }},
+            "medical exemptions": {{ school.num_PME }},
+            "Hepatitis B" : {{ school.num_HEPB }},
+            "Polio" : {{ school.num_polio }},
+            "MMR" : {{ school.num_MMR }},
+            "DTP" : {{ school.num_DTP }}
+        };
+        var labels = [];
+        var values = [];
+        for (k in kvp){
+            kvp[k] = Math.round((kvp[k] / enrollment)*100);
+            labels.push(k);
+            values.push(kvp[k]);
+        }
+    
+        var barChartData = {
+            labels : labels,
+            datasets : [
+                {
+                    label : "{{ school.school_name }}",
+                    fillColor : "rgba(220,220,220,0.5)",
+                    strokeColor : "rgba(220,220,220,0.8)",
+                    highlightFill: "rgba(220,220,220,0.75)",
+                    highlightStroke: "rgba(220,220,220,1)",
+                    data : values
+                }/*,
+                {
+                    label : "{{ school.city }}",
+                    fillColor : "rgba(151,187,205,0.5)",
+                    strokeColor : "rgba(151,187,205,0.8)",
+                    highlightFill : "rgba(151,187,205,0.75)",
+                    highlightStroke : "rgba(151,187,205,1)",
+                    data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()   ,randomScalingFactor(),randomScalingFactor()]
+                }*/
+            ]
+        };
+
+    
+        var ctx = document.getElementById("canvas").getContext("2d");
+        window.myBar = new Chart(ctx).Bar(barChartData, {
+            scaleOverride: true,
+            scaleSteps: 10,
+            scaleStepWidth: 10,
+            scaleStartValue: 0,
+            scaleLabel: '<%=value%>%',
+            tooltipTemplate: "<%= value %>%",
+            multiTooltipTemplate: "<%= value %>%",
+            scaleBeginAtZero: true,
+            responsive : true,
+            maintainAspectRatio: false
+        });
+    })();
+    </script>
+</section>
+<section id="formpages">
     <dl>
         <dt>District:</dt><dd>{{ school.district }}</dd>
         <dt>City:</dt><dd>{{ school.city }}</dd>
@@ -18,8 +81,7 @@
         <dt>Polio:</dt><dd>{{ '{:.2%}'.format( school.num_polio/school.enrollment ) }}</dd>
         <dt>Measles, Mumps, and Rubella (MMR):</dt><dd>{{ '{:.2%}'.format( school.num_MMR/school.enrollment ) }}</dd>
         <dt>Diphtheria, Pertussis (whooping cough), and Tetanus (DTP):</dt><dd>{{ '{:.2%}'.format( school.num_DTP/school.enrollment ) }}</dd>
-        
-        
     </dl>
 </section>
+
 {% endblock %}
