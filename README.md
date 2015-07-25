@@ -12,6 +12,28 @@ The column headers should be changed and title information leading up to the act
 
 The file can then be saved or exported as a CSV that is ready for the next step.
 
+##Using virtualenv (optional)
+
+Install virtualenv via pip:
+
+    $ pip install virtualenv
+
+ Create virtualenv for this project:
+
+     $ cd immunizationSJ
+     $ virtualenv venv
+
+ virtualenv venv will create a folder in immunizationSJ directory which will contain the Python executable files, and a copy of the pip library which you can use to install other packages. 
+
+To begin using the virtual environment, it needs to be activated:
+
+    . venv/bin/activate
+
+The name immunizationSJ will now appear on the left of the prompt (e.g. (venv)Your-Computer:immunizationSJ UserName$) to let you know that it’s active. From now on, any package that you install using pip will be placed in the venv folder, isolated from the global Python installation.
+
+Now install flask:
+    pip install flask    
+
 ## Create the database
 Run the provided `db_utils.py` utility program with the `create` option:
 
