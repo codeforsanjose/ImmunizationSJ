@@ -51,3 +51,8 @@ Start the Flask application by running `app.py`:
     python app.py
 
 With this running, open a web browser to [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
+
+## Screenshots
+
+##### Example school record:
+![example_school_record](https://github.com/codeforsanjose/ImmunizationSJ/blob/master/screenshots/example_school_record.png "Example School Record")
