@@ -1,4 +1,5 @@
 {
  "status": "Alpha",
- "tags": ["immunization", "open data", "san jose",]
+ "tags": ["immunization", "open data", "san jose"]
+ "skills": ["python", "devops", "flask"]
 }
