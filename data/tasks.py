@@ -39,7 +39,7 @@ def source_dataset(dataset):
 
         # Custom value transformations
         # 'public' must be a boolean field
-        data['public'] = data['public'].lower() == 'public',
+        data['public'] = data['public'].lower() is 'public'
 
         # 'reported' must be a boolean field
         data['reported'] = data['reported'].lower() in ('y', 'yes')
