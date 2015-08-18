@@ -44,15 +44,12 @@ def source_dataset(dataset):
         # 'reported' must be a boolean field
         data['reported'] = data['reported'].lower() in ('y', 'yes')
 
-        # bind data entry to dataset (ForeignKey relationship)
-        data['dataset'] = dataset.pk
-
         serializer = RecordSerializer(data=data)
         serializer.is_valid(raise_exception=True)
 
         Record.objects.update_or_create(
             defaults=serializer.validated_data,
-            dataset=serializer.validated_data['dataset'],
+            dataset=dataset,
             code=serializer.validated_data['code']
         )
 
@@ -70,5 +67,3 @@ def source_datasets():
         except:
             # Add logging here
             raise
-
-

@@ -12,3 +12,4 @@ class FieldsMapSerializer(serializers.ModelSerializer):
 class RecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = Record
+        exclude = ('dataset',)
