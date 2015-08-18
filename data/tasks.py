@@ -6,8 +6,8 @@ from django.db import transaction
 from django.utils import timezone
 
 from .cdph.api import CdphViews, CdphMigrations
-from .models import Dataset
-from .serializers import FieldsMapSerializer
+from .models import Dataset, Record
+from .serializers import FieldsMapSerializer, RecordSerializer
 
 def update_datasets():
     api = CdphMigrations()
@@ -39,12 +39,22 @@ def source_dataset(dataset):
 
         # Custom value transformations
         # 'public' must be a boolean field
-        data['public'] = data['public'].lower() is 'public'
+        data['public'] = data['public'].lower() == 'public'
 
         # 'reported' must be a boolean field
         data['reported'] = data['reported'].lower() in ('y', 'yes')
 
-        print data
+        # bind data entry to dataset (ForeignKey relationship)
+        data['dataset'] = dataset.pk
+
+        serializer = RecordSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+
+        Record.objects.update_or_create(
+            defaults=serializer.validated_data,
+            dataset=serializer.validated_data['dataset'],
+            code=serializer.validated_data['code']
+        )
 
     # Update dataset entry to reflect successful import
     dataset.sourced = True
@@ -59,6 +69,6 @@ def source_datasets():
                 source_dataset(d)
         except:
             # Add logging here
-            continue
+            raise
 
 
