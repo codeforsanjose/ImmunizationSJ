@@ -48,3 +48,29 @@ class FieldsMap(models.Model):
     hib = models.CharField(max_length=255, blank=True)
     hepb = models.CharField(max_length=255, blank=True)
     vari = models.CharField(max_length=255, blank=True)
+
+
+# Temporary model to hold sourced data
+class Record(models.Model):
+    dataset = models.ForeignKey(Dataset, related_name='records')
+
+    code = models.IntegerField()
+    name = models.CharField(max_length=255)
+    public = models.BooleanField()
+
+    city = models.CharField(max_length=100)
+    county = models.CharField(max_length=100)
+    district = models.CharField(max_length=100, blank=True)
+
+    reported = models.BooleanField()
+    enrollment = models.IntegerField(blank=True, null=True)
+    up_to_date = models.IntegerField(blank=True, null=True)
+    conditional = models.IntegerField(blank=True, null=True)
+    pme = models.IntegerField(blank=True, null=True)
+    pbe = models.IntegerField(blank=True, null=True)
+    dtp = models.IntegerField(blank=True, null=True)
+    polio = models.IntegerField(blank=True, null=True)
+    mmr = models.IntegerField(blank=True, null=True)
+    hib = models.IntegerField(blank=True, null=True)
+    hepb = models.IntegerField(blank=True, null=True)
+    vari = models.IntegerField(blank=True, null=True)
