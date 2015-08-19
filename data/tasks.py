@@ -6,13 +6,11 @@ from django.db import transaction
 from django.utils import timezone
 
 from .cdph.api import CdphViews, CdphMigrations
-from .models import Dataset, City, County, District, School, Record
-from .serializers import (FieldsMapSerializer,
-                          CitySerializer,
-                          CountySerializer,
-                          DistrictSerializer,
-                          SchoolSerializer,
-                          RecordSerializer)
+from .models import (Dataset, Sector, City, County,
+                     District, School, Record, Summary)
+from .serializers import (FieldsMapSerializer, CitySerializer,
+                          CountySerializer, DistrictSerializer,
+                          SchoolSerializer, RecordSerializer)
 
 def update_datasets():
     api = CdphMigrations()
@@ -82,12 +80,22 @@ def source_dataset(dataset):
             school=school
         )
 
-    # Update dataset entry to reflect successful import
-    dataset.sourced = True
-    dataset.save()
+def cache_summary(dataset, sector):
+    records = Record.objects.filter(dataset=dataset).filter(school__in=sector.schools.all())
+    # Do something with records
+    Summary.objects.update_or_create(defaults={'summary': ''},
+                                     dataset=dataset,
+                                     sector=sector.sector_ptr,
+                                     summary_type='ALL')
 
 def cache_summaries(dataset):
-    pass
+    try:
+        for _Sector in (City, County, District,):
+            for sector in _Sector.objects.all():
+                cache_summary(dataset, sector)
+    except:
+        # Add logging here
+        raise
 
 @shared_task
 def source_datasets():
@@ -97,6 +105,8 @@ def source_datasets():
             with transaction.atomic():
                 source_dataset(d)
                 cache_summaries(d)
+                d.sourced = True
+                d.save()
         except:
             # Add logging here
             raise
