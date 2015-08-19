@@ -6,8 +6,13 @@ from django.db import transaction
 from django.utils import timezone
 
 from .cdph.api import CdphViews, CdphMigrations
-from .models import Dataset, Record
-from .serializers import FieldsMapSerializer, RecordSerializer
+from .models import Dataset, City, County, District, School, Record
+from .serializers import (FieldsMapSerializer,
+                          CitySerializer,
+                          CountySerializer,
+                          DistrictSerializer,
+                          SchoolSerializer,
+                          RecordSerializer)
 
 def update_datasets():
     api = CdphMigrations()
@@ -37,25 +42,52 @@ def source_dataset(dataset):
         # Apply field name mappings
         data = {mappings.get(k, k): v for k, v in entry.iteritems() if v}
 
-        # Custom value transformations
-        # 'public' must be a boolean field
-        data['public'] = data['public'].lower() == 'public'
+        # Create required sectors
+        # Create city
+        city_serializer = CitySerializer(data=data)
+        city_serializer.is_valid(raise_exception=True)
+        city, _ = City.objects.get_or_create(
+            **city_serializer.validated_data)
 
-        # 'reported' must be a boolean field
-        data['reported'] = data['reported'].lower() in ('y', 'yes')
+        # Create county
+        county_serializer = CountySerializer(data=data)
+        county_serializer.is_valid(raise_exception=True)
+        county, _ = County.objects.get_or_create(
+            **county_serializer.validated_data)
 
-        serializer = RecordSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
+        # Create school
+        school_serializer = SchoolSerializer(data=data)
+        school_serializer.is_valid(raise_exception=True)
+        school, _ = School.objects.update_or_create(
+            defaults=school_serializer.validated_data,
+            code=school_serializer.validated_data['code'],
+            city=city,
+            county=county
+        )
 
+        # Add district to school if it exists:
+        district_serializer = DistrictSerializer(data=data)
+        # No need to raise exception here since this is an optional field
+        if district_serializer.is_valid():
+            school.district, _ = District.objects.get_or_create(
+                **district_serializer.validated_data)
+            school.save()
+
+        ## Finally create record
+        record_serializer = RecordSerializer(data=data)
+        record_serializer.is_valid(raise_exception=True)
         Record.objects.update_or_create(
-            defaults=serializer.validated_data,
+            defaults=record_serializer.validated_data,
             dataset=dataset,
-            code=serializer.validated_data['code']
+            school=school
         )
 
     # Update dataset entry to reflect successful import
     dataset.sourced = True
     dataset.save()
+
+def cache_summaries(dataset):
+    pass
 
 @shared_task
 def source_datasets():
@@ -64,6 +96,7 @@ def source_datasets():
             # Commit each dataset as a whole
             with transaction.atomic():
                 source_dataset(d)
+                cache_summaries(d)
         except:
             # Add logging here
             raise

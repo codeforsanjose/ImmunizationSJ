@@ -50,18 +50,46 @@ class FieldsMap(models.Model):
     vari = models.CharField(max_length=255, blank=True)
 
 
-# Temporary model to hold sourced data
-class Record(models.Model):
-    dataset = models.ForeignKey(Dataset, related_name='records')
+class Sector(models.Model):
+    name = models.CharField(max_length=100)
 
+    def __unicode__(self):
+        return self.name
+
+
+class City(Sector):
+    # Add additional information
+    pass
+
+
+class County(Sector):
+    # Add additional information
+    pass
+
+
+class District(Sector):
+    # Add additional information
+    pass
+
+
+class School(models.Model):
     code = models.IntegerField()
     name = models.CharField(max_length=255)
     public = models.BooleanField()
 
-    city = models.CharField(max_length=100)
-    county = models.CharField(max_length=100)
-    district = models.CharField(max_length=100, blank=True)
+    # Sectors
+    city = models.ForeignKey(City, related_name='schools')
+    county = models.ForeignKey(County, related_name='schools')
+    district = models.ForeignKey(District, blank=True, null=True,
+                                 related_name='schools')
 
+    # Add school geolocation information
+
+
+# Temporary model to hold sourced data
+class Record(models.Model):
+    dataset = models.ForeignKey(Dataset, related_name='records')
+    school = models.ForeignKey(School, related_name='records')
     reported = models.BooleanField()
     enrollment = models.IntegerField(blank=True, null=True)
     up_to_date = models.IntegerField(blank=True, null=True)
@@ -74,3 +102,16 @@ class Record(models.Model):
     hib = models.IntegerField(blank=True, null=True)
     hepb = models.IntegerField(blank=True, null=True)
     vari = models.IntegerField(blank=True, null=True)
+
+
+class Summary(models.Model):
+    SUMMARY_TYPES = (
+        ('ALL', _('All')),
+        ('PRI', _('Private')),
+        ('PUB', _('Public')),
+    )
+
+    dataset = models.ForeignKey(Dataset)
+    sector = models.ForeignKey(Sector, related_name='summaries')
+    summary_type = models.CharField(max_length=3, choices=SUMMARY_TYPES)
+    summary = models.TextField(blank=True)

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Dataset, FieldsMap, Record
+from .models import Dataset, FieldsMap, School, Record
 
 
 class FieldsMapInline(admin.StackedInline):
@@ -10,12 +10,16 @@ class FieldsMapInline(admin.StackedInline):
 @admin.register(Dataset)
 class DatasetAdmin(admin.ModelAdmin):
     list_display = ('year', 'grade', 'uid', 'queued_date', 'sourced')
-    list_filter = ('year', 'grade',)
     inlines = (FieldsMapInline,)
 
 
-@admin.register(Record)
-class RecordAdmin(admin.ModelAdmin):
+class RecordInline(admin.TabularInline):
+    model = Record
+
+
+@admin.register(School)
+class SchoolAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'public', 'city', 'county', 'district')
-    list_filter = ('county', 'public', 'dataset')
+    list_filter = ('public', 'county',)
     search_fields = ('code', 'name', 'city', 'county', 'district')
+    inlines = (RecordInline,)
