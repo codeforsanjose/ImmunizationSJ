@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils import timezone
 
+from django_pandas.managers import DataFrameManager
+
 
 class Dataset(models.Model):
     GRADE_CHOICES = (
@@ -105,6 +107,8 @@ class Record(models.Model):
     hib = models.IntegerField(blank=True, null=True)
     hepb = models.IntegerField(blank=True, null=True)
     vari = models.IntegerField(blank=True, null=True)
+
+    objects = DataFrameManager()
 
 
 class Summary(models.Model):

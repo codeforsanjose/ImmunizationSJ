@@ -81,7 +81,11 @@ def source_dataset(dataset):
         )
 
 def cache_summary(dataset, sector):
-    records = Record.objects.filter(dataset=dataset).filter(school__in=sector.schools.all())
+    records = Record.objects.filter(dataset=dataset).filter(school__in=sector.schools.all()).filter(reported=True).to_dataframe([
+        'up_to_date', 'conditional', 'pme', 'pbe', 'dtp', 'polio', 'mmr',
+        'hib', 'hepb', 'vari',
+    ]).dropna(axis=1, how='all')
+
     # Do something with records
     Summary.objects.update_or_create(defaults={'summary': ''},
                                      dataset=dataset,
