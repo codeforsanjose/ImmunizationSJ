@@ -89,8 +89,7 @@ def cache_summary(dataset, sector):
     # Do something with records
     Summary.objects.update_or_create(defaults={'summary': ''},
                                      dataset=dataset,
-                                     sector=sector.sector_ptr,
-                                     summary_type='ALL')
+                                     sector=sector.sector_ptr)
 
 def cache_summaries(dataset):
     try:
