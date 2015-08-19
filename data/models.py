@@ -85,6 +85,9 @@ class School(models.Model):
 
     # Add school geolocation information
 
+    def __unicode__(self):
+        return self.name
+
 
 # Temporary model to hold sourced data
 class Record(models.Model):
