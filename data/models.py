@@ -112,13 +112,6 @@ class Record(models.Model):
 
 
 class Summary(models.Model):
-    SUMMARY_TYPES = (
-        ('ALL', _('All')),
-        ('PRI', _('Private')),
-        ('PUB', _('Public')),
-    )
-
     dataset = models.ForeignKey(Dataset)
     sector = models.ForeignKey(Sector, related_name='summaries')
-    summary_type = models.CharField(max_length=3, choices=SUMMARY_TYPES)
     summary = models.TextField(blank=True)
