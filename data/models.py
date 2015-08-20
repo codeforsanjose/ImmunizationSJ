@@ -114,4 +114,4 @@ class Record(models.Model):
 class Summary(models.Model):
     dataset = models.ForeignKey(Dataset)
     sector = models.ForeignKey(Sector, related_name='summaries')
-    summary = models.TextField(blank=True)
+    summary = models.TextField(blank=True, null=True)
