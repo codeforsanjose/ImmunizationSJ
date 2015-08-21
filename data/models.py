@@ -59,19 +59,14 @@ class Sector(models.Model):
         return self.name
 
 
-class City(Sector):
-    # Add additional information
-    pass
-
-
 class County(Sector):
     # Add additional information
     pass
 
 
 class District(Sector):
+    county = models.ForeignKey(County, related_name='districts')
     # Add additional information
-    pass
 
 
 class School(models.Model):
@@ -80,7 +75,7 @@ class School(models.Model):
     public = models.BooleanField()
 
     # Sectors
-    city = models.ForeignKey(City, related_name='schools')
+    city = models.CharField(max_length=100)
     county = models.ForeignKey(County, related_name='schools')
     district = models.ForeignKey(District, blank=True, null=True,
                                  related_name='schools')

@@ -7,11 +7,11 @@ from django.db import transaction
 from django.utils import timezone
 
 from .cdph.api import CdphViews, CdphMigrations
-from .models import (Dataset, Sector, City, County,
-                     District, School, Record, Summary)
-from .serializers import (FieldsMapSerializer, CitySerializer,
-                          CountySerializer, DistrictSerializer,
-                          SchoolSerializer, RecordSerializer)
+from .models import (Dataset, Sector, County, District,
+                     School, Record, Summary)
+from .serializers import (FieldsMapSerializer, CountySerializer,
+                          DistrictSerializer, SchoolSerializer,
+                          RecordSerializer)
 
 _SUMM_FIELDS_ = ['up_to_date', 'conditional', 'pme', 'pbe', 'dtp',
                  'polio', 'mmr', 'hib', 'hepb', 'vari']
@@ -41,26 +41,18 @@ def source_dataset(dataset):
         # Apply field name mappings
         data = {mappings.get(k, k): v for k, v in entry.iteritems() if v}
 
-        # City and County are required and need to be created first
-        # Create city
-        city_serializer = CitySerializer(data=data)
-        city_serializer.is_valid(raise_exception=True)
-        city, _ = City.objects.get_or_create(
-            **city_serializer.validated_data)
-
         # Create county
         county_serializer = CountySerializer(data=data)
         county_serializer.is_valid(raise_exception=True)
         county, _ = County.objects.get_or_create(
             **county_serializer.validated_data)
 
-        # Create school in the above city and county
+        # Create school in the above county
         school_serializer = SchoolSerializer(data=data)
         school_serializer.is_valid(raise_exception=True)
         school, _ = School.objects.get_or_create(
             defaults=school_serializer.validated_data,
             code=school_serializer.validated_data['code'],
-            city=city,
             county=county
         )
 
@@ -68,8 +60,12 @@ def source_dataset(dataset):
         district_serializer = DistrictSerializer(data=data)
         # No need to raise exception here since this is an optional field
         if district_serializer.is_valid():
-            school.district, _ = District.objects.get_or_create(
-                **district_serializer.validated_data)
+            district, _ = District.objects.get_or_create(
+                county=county,
+                **district_serializer.validated_data
+            )
+
+            school.district = district
             school.save()
 
         ## Finally create record
@@ -100,7 +96,7 @@ def generate_summary(dataset, sector):
         return json.dumps(summary)
 
 def cache_summaries(dataset):
-    for _Sector in (City, County, District,):
+    for _Sector in (County, District,):
         for sector in _Sector.objects.all():
             summary = generate_summary(dataset, sector)
             Summary.objects.update_or_create(defaults={'summary': summary},

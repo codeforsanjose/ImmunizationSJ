@@ -21,6 +21,6 @@ class RecordInline(admin.TabularInline):
 class SchoolAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'public', 'city', 'county', 'district')
     list_filter = ('public', 'county',)
-    search_fields = ('code', 'name', 'city__name',
+    search_fields = ('code', 'name', 'city',
                      'county__name', 'district__name')
     inlines = (RecordInline,)

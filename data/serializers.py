@@ -2,7 +2,7 @@ import re
 
 from rest_framework import serializers
 
-from .models import FieldsMap, City, County, District, School, Record
+from .models import FieldsMap, County, District, School, Record
 
 
 class LazyBooleanField(serializers.BooleanField):
@@ -34,14 +34,6 @@ class FieldsMapSerializer(serializers.ModelSerializer):
         exclude = ('id', 'dataset',)
 
 
-class CitySerializer(serializers.ModelSerializer):
-    city = serializers.CharField(source='name')
-
-    class Meta:
-        model = City
-        fields = ('city',)
-
-
 class CountySerializer(serializers.ModelSerializer):
     county = serializers.CharField(source='name')
 
@@ -63,7 +55,7 @@ class SchoolSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = School
-        exclude = ('city', 'county', 'district',)
+        exclude = ('county', 'district',)
 
 
 class RecordSerializer(serializers.ModelSerializer):
