@@ -1,6 +1,3 @@
-import re
-import json
-
 from celery import shared_task
 
 from django.db import transaction
@@ -93,7 +90,7 @@ def generate_summary(dataset, sector):
         summary = {is_public: subset.describe().to_dict()
                    for is_public, subset in records_df.groupby(by)}
         summary['all'] = records_df.describe().to_dict()
-        return json.dumps(summary)
+        return summary
 
 def cache_summaries(dataset):
     for _Sector in (County, District,):

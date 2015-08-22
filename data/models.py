@@ -1,10 +1,9 @@
-import json
-
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils import timezone
 
 from django_pandas.managers import DataFrameManager
+from jsonfield import JSONField
 
 
 class Dataset(models.Model):
@@ -109,18 +108,14 @@ class Record(models.Model):
 
     @property
     def county_summary(self):
-        return self.school.county.summaries.get(dataset=self.dataset).json
+        return self.school.county.summaries.get(dataset=self.dataset).summary
 
     @property
     def district_summary(self):
-        return self.school.district.summaries.get(dataset=self.dataset).json
+        return self.school.district.summaries.get(dataset=self.dataset).summary
 
 
 class Summary(models.Model):
     dataset = models.ForeignKey(Dataset)
     sector = models.ForeignKey(Sector, related_name='summaries')
-    summary = models.TextField(blank=True, null=True)
-
-    @property
-    def json(self):
-        return json.loads(self.summary)
+    summary = JSONField()
