@@ -4,11 +4,23 @@ from django.db import transaction
 from django.utils import timezone
 
 from .cdph.api import CdphViews, CdphMigrations
-from .models import (Dataset, Sector, County, District,
-                     School, StatFieldsMixin, Record, Summary)
-from .serializers import (FieldsMapSerializer, CountySerializer,
-                          DistrictSerializer, SchoolSerializer,
-                          RecordSerializer)
+from .models import (
+    Dataset,
+    Sector,
+    County,
+    District,
+    School,
+    StatFieldsMixin,
+    Record,
+    Summary
+)
+from .serializers import (
+    FieldsMapSerializer,
+    CountySerializer,
+    DistrictSerializer,
+    SchoolSerializer,
+    RecordSerializer
+)
 
 def update_datasets():
     api = CdphMigrations()
@@ -93,12 +105,16 @@ def generate_summary(dataset, sector):
         .to_dataframe(get_fields_to_summarize())
         .dropna(axis=1, how='all')
     )
-    by = ['public' if is_public else 'private' for is_public in
-          records.values_list('school__public', flat=True)]
+    by = [
+        'public' if is_public else 'private'
+        for is_public in records.values_list('school__public', flat=True)
+    ]
 
     if not records_df.empty:
-        summary = {is_public: subset.describe().to_dict()
-                   for is_public, subset in records_df.groupby(by)}
+        summary = {
+            is_public: subset.describe().to_dict()
+            for is_public, subset in records_df.groupby(by)
+        }
         summary['all'] = records_df.describe().to_dict()
         return summary
 
