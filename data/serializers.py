@@ -51,7 +51,7 @@ class DistrictSerializer(serializers.ModelSerializer):
 
 
 class SchoolSerializer(serializers.ModelSerializer):
-    public = SchoolTypeField()
+    public = SchoolTypeField(default=False)
 
     class Meta:
         model = School
@@ -59,7 +59,7 @@ class SchoolSerializer(serializers.ModelSerializer):
 
 
 class RecordSerializer(serializers.ModelSerializer):
-    reported = ReportedField()
+    reported = ReportedField(default=False)
 
     class Meta:
         model = Record
