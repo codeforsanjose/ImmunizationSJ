@@ -4,6 +4,8 @@ from data.models import Dataset, County, District, School, Record, Summary
 
 
 class DatasetSerializer(serializers.HyperlinkedModelSerializer):
+    grade = serializers.CharField(source='get_grade_display')
+
     class Meta:
         model = Dataset
 
