@@ -107,7 +107,7 @@ def update_db():
             # Commit each dataset as a whole
             with transaction.atomic():
                 if d.sourced:
-                    return
+                    continue
 
                 source_dataset(d)
                 cache_summaries(d)
