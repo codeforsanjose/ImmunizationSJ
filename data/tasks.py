@@ -62,7 +62,7 @@ def source_dataset(dataset):
             county=county
         )
 
-        # Add district to school if it exists:
+        # Create a district as well, if possible
         district_serializer = DistrictSerializer(data=data)
         # No need to raise exception here since this is an optional field
         if district_serializer.is_valid():
@@ -70,7 +70,7 @@ def source_dataset(dataset):
                 county=county,
                 **district_serializer.validated_data
             )
-
+            # Save district to school
             school.district = district
             school.save()
 
@@ -107,6 +107,7 @@ def generate_summary(dataset, sector):
         .filter(reported=True)
         .filter(school__in=sector.schools.all())
     )
+    # Only use reported values for calculating summaries
     records_df = (
         records
         .to_dataframe(get_fields_to_summarize())
@@ -118,10 +119,7 @@ def generate_summary(dataset, sector):
     ]
 
     if not records_df.empty:
-        return format_summary(
-            ('all', records_df),
-            *records_df.groupby(by)
-        )
+        return format_summary(('all', records_df), *records_df.groupby(by))
 
 def cache_summaries(dataset):
     for _Sector in get_all_sector_types():
