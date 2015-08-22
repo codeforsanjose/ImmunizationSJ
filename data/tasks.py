@@ -93,6 +93,13 @@ def get_all_sector_types():
 def get_fields_to_summarize():
     return [i.name for i in StatFieldsMixin._meta.fields]
 
+def summarize_df(df):
+    # All pandas-friendly summarizations go here.
+    return df.describe().to_dict()
+
+def format_summary(*args):
+    return {k: summarize_df(v) for k, v in args}
+
 def generate_summary(dataset, sector):
     records = (
         Record.objects
@@ -111,12 +118,10 @@ def generate_summary(dataset, sector):
     ]
 
     if not records_df.empty:
-        summary = {
-            is_public: subset.describe().to_dict()
-            for is_public, subset in records_df.groupby(by)
-        }
-        summary['all'] = records_df.describe().to_dict()
-        return summary
+        return format_summary(
+            ('all', records_df),
+            *records_df.groupby(by)
+        )
 
 def cache_summaries(dataset):
     for _Sector in get_all_sector_types():
