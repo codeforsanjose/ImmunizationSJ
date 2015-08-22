@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from data.models import Dataset, County, District, School, Record
+from data.models import Dataset, County, District, School, Record, Summary
 
 
 class DatasetSerializer(serializers.HyperlinkedModelSerializer):
@@ -34,3 +34,17 @@ class RecordDetailSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Record
+
+
+class SummaryListSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Summary
+        fields = ('url', 'dataset',)
+
+
+class SummaryDetailSerializer(serializers.HyperlinkedModelSerializer):
+    summary = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Summary
+        exclude = ('sector',)
