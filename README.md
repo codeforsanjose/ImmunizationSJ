@@ -1,0 +1,3 @@
+## ImmunizeCA
+
+This is an experimental rewrite of [ImmunizationSJ](https://github.com/codeforsanjose/ImmunizationSJ) using Django. More information to follow...
