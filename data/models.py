@@ -87,22 +87,38 @@ class School(models.Model):
         return self.name
 
 
-# Temporary model to hold sourced data
-class Record(models.Model):
+class StatFieldsMixin(models.Model):
+    enrollment = models.DecimalField(decimal_places=2, max_digits=10,
+                                     blank=True, null=True)
+    up_to_date = models.DecimalField(decimal_places=2, max_digits=10,
+                                     blank=True, null=True)
+    conditional = models.DecimalField(decimal_places=2, max_digits=10,
+                                      blank=True, null=True)
+    pme = models.DecimalField(decimal_places=2, max_digits=10,
+                              blank=True, null=True)
+    pbe = models.DecimalField(decimal_places=2, max_digits=10,
+                              blank=True, null=True)
+    dtp = models.DecimalField(decimal_places=2, max_digits=10,
+                              blank=True, null=True)
+    polio = models.DecimalField(decimal_places=2, max_digits=10,
+                                blank=True, null=True)
+    mmr = models.DecimalField(decimal_places=2, max_digits=10,
+                              blank=True, null=True)
+    hib = models.DecimalField(decimal_places=2, max_digits=10,
+                              blank=True, null=True)
+    hepb = models.DecimalField(decimal_places=2, max_digits=10,
+                               blank=True, null=True)
+    vari = models.DecimalField(decimal_places=2, max_digits=10,
+                               blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
+class Record(StatFieldsMixin, models.Model):
     dataset = models.ForeignKey(Dataset, related_name='records')
     school = models.ForeignKey(School, related_name='records')
     reported = models.BooleanField()
-    enrollment = models.IntegerField(blank=True, null=True)
-    up_to_date = models.IntegerField(blank=True, null=True)
-    conditional = models.IntegerField(blank=True, null=True)
-    pme = models.IntegerField(blank=True, null=True)
-    pbe = models.IntegerField(blank=True, null=True)
-    dtp = models.IntegerField(blank=True, null=True)
-    polio = models.IntegerField(blank=True, null=True)
-    mmr = models.IntegerField(blank=True, null=True)
-    hib = models.IntegerField(blank=True, null=True)
-    hepb = models.IntegerField(blank=True, null=True)
-    vari = models.IntegerField(blank=True, null=True)
 
     objects = DataFrameManager()
 

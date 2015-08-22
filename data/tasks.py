@@ -5,13 +5,10 @@ from django.utils import timezone
 
 from .cdph.api import CdphViews, CdphMigrations
 from .models import (Dataset, Sector, County, District,
-                     School, Record, Summary)
+                     School, StatFieldsMixin, Record, Summary)
 from .serializers import (FieldsMapSerializer, CountySerializer,
                           DistrictSerializer, SchoolSerializer,
                           RecordSerializer)
-
-_SUMM_FIELDS_ = ['up_to_date', 'conditional', 'pme', 'pbe', 'dtp',
-                 'polio', 'mmr', 'hib', 'hepb', 'vari']
 
 def update_datasets():
     api = CdphMigrations()
@@ -74,6 +71,16 @@ def source_dataset(dataset):
             school=school
         )
 
+def get_all_sector_types():
+    return [
+        i.related_model
+        for i in Sector._meta.get_all_related_objects()
+        if i.parent_link
+    ]
+
+def get_fields_to_summarize():
+    return [i.name for i in StatFieldsMixin._meta.fields]
+
 def generate_summary(dataset, sector):
     records = (
         Record.objects
@@ -81,8 +88,11 @@ def generate_summary(dataset, sector):
         .filter(reported=True)
         .filter(school__in=sector.schools.all())
     )
-
-    records_df = records.to_dataframe(_SUMM_FIELDS_).dropna(axis=1, how='all')
+    records_df = (
+        records
+        .to_dataframe(get_fields_to_summarize())
+        .dropna(axis=1, how='all')
+    )
     by = ['public' if is_public else 'private' for is_public in
           records.values_list('school__public', flat=True)]
 
@@ -93,7 +103,7 @@ def generate_summary(dataset, sector):
         return summary
 
 def cache_summaries(dataset):
-    for _Sector in (County, District,):
+    for _Sector in get_all_sector_types():
         for sector in _Sector.objects.all():
             summary = generate_summary(dataset, sector)
             Summary.objects.update_or_create(defaults={'summary': summary},
