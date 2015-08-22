@@ -90,50 +90,17 @@ class School(models.Model):
 
 
 class StatFieldsMixin(models.Model):
-    enrollment = models.DecimalField(decimal_places=2,
-                                     max_digits=10,
-                                     blank=True,
-                                     null=True)
-    up_to_date = models.DecimalField(decimal_places=2,
-                                     max_digits=10,
-                                     blank=True,
-                                     null=True)
-    conditional = models.DecimalField(decimal_places=2,
-                                      max_digits=10,
-                                      blank=True,
-                                      null=True)
-    pme = models.DecimalField(decimal_places=2,
-                              max_digits=10,
-                              blank=True,
-                              null=True)
-    pbe = models.DecimalField(decimal_places=2,
-                              max_digits=10,
-                              blank=True,
-                              null=True)
-    dtp = models.DecimalField(decimal_places=2,
-                              max_digits=10,
-                              blank=True,
-                              null=True)
-    polio = models.DecimalField(decimal_places=2,
-                                max_digits=10,
-                                blank=True,
-                                null=True)
-    mmr = models.DecimalField(decimal_places=2,
-                              max_digits=10,
-                              blank=True,
-                              null=True)
-    hib = models.DecimalField(decimal_places=2,
-                              max_digits=10,
-                              blank=True,
-                              null=True)
-    hepb = models.DecimalField(decimal_places=2,
-                               max_digits=10,
-                               blank=True,
-                               null=True)
-    vari = models.DecimalField(decimal_places=2,
-                               max_digits=10,
-                               blank=True,
-                               null=True)
+    enrollment = models.FloatField(blank=True, null=True)
+    up_to_date = models.FloatField(blank=True, null=True)
+    conditional = models.FloatField(blank=True, null=True)
+    pme = models.FloatField(blank=True, null=True)
+    pbe = models.FloatField(blank=True, null=True)
+    dtp = models.FloatField(blank=True, null=True)
+    polio = models.FloatField(blank=True, null=True)
+    mmr = models.FloatField(blank=True, null=True)
+    hib = models.FloatField(blank=True, null=True)
+    hepb = models.FloatField(blank=True, null=True)
+    vari = models.FloatField(blank=True, null=True)
 
     class Meta:
         abstract = True
