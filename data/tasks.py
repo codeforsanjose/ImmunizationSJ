@@ -22,6 +22,13 @@ from .serializers import (
     RecordSerializer
 )
 
+__SECTOR_TYPES__ = [
+    i.related_model
+    for i in Sector._meta.get_all_related_objects()
+    if i.parent_link
+]
+__SUMMARIZE_FIELDS__ = [i.name for i in StatFieldsMixin._meta.fields]
+
 def update_datasets():
     api = CdphMigrations()
     for d in Dataset.objects.all():
@@ -83,16 +90,6 @@ def source_dataset(dataset):
             school=school
         )
 
-def get_all_sector_types():
-    return [
-        i.related_model
-        for i in Sector._meta.get_all_related_objects()
-        if i.parent_link
-    ]
-
-def get_fields_to_summarize():
-    return [i.name for i in StatFieldsMixin._meta.fields]
-
 def summarize_df(df):
     # All pandas-friendly summarizations go here.
     return df.describe().to_dict()
@@ -110,7 +107,7 @@ def generate_summary(dataset, sector):
     # Only use reported values for calculating summaries
     records_df = (
         records
-        .to_dataframe(get_fields_to_summarize())
+        .to_dataframe(__SUMMARIZE_FIELDS__)
         .dropna(axis=1, how='all')
     )
     by = [
@@ -122,7 +119,7 @@ def generate_summary(dataset, sector):
         return format_summary(('all', records_df), *records_df.groupby(by))
 
 def cache_summaries(dataset):
-    for _Sector in get_all_sector_types():
+    for _Sector in __SECTOR_TYPES__:
         for sector in _Sector.objects.all():
             summary = generate_summary(dataset, sector)
             Summary.objects.update_or_create(defaults={'summary': summary},
@@ -145,4 +142,4 @@ def update_db():
                 d.save()
         except:
             # Add logging here
-            raise
+            continue
