@@ -1,5 +1,4 @@
 from rest_framework import viewsets
-from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 
 from data.models import Dataset, County, District, School, Record, Summary
@@ -14,11 +13,20 @@ from .serializers import (
     SummaryListSerializer,
     SummaryDetailSerializer
 )
+from .filters import (
+    DatasetFilter,
+    CountyFilter,
+    DistrictFilter,
+    SchoolFilter,
+    RecordFilter,
+    SummaryFilter
+)
 
 
 class DatasetViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Dataset.objects.all()
     serializer_class = DatasetSerializer
+    filter_class = DatasetFilter
 
     @detail_route()
     def records(self, request, pk=None):
@@ -42,20 +50,24 @@ class SectorViewSet(viewsets.ReadOnlyModelViewSet):
 class CountyViewSet(SectorViewSet):
     queryset = County.objects.all()
     serializer_class = CountySerializer
+    filter_class = CountyFilter
 
 
 class DistrictViewSet(SectorViewSet):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
+    filter_class = DistrictFilter
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
+    filter_class = SchoolFilter
 
 
 class RecordViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Record.objects.all()
+    filter_class = RecordFilter
 
     def get_serializer_class(self):
         return RecordListSerializer if self.action == 'list' else \
@@ -64,6 +76,7 @@ class RecordViewSet(viewsets.ReadOnlyModelViewSet):
 
 class SummaryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Summary.objects.all()
+    filter_class = SummaryFilter
 
     def get_serializer_class(self):
         return SummaryListSerializer if self.action == 'list' else \
