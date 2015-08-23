@@ -21,6 +21,12 @@ from .filters import (
     RecordFilter,
     SummaryFilter
 )
+from .nested_viewset_responses import (
+    NestedViewSetDistrictList,
+    NestedViewSetSchoolList,
+    NestedViewSetRecordList,
+    NestedViewSetSummaryList
+)
 
 
 class DatasetViewSet(viewsets.ReadOnlyModelViewSet):
@@ -30,21 +36,21 @@ class DatasetViewSet(viewsets.ReadOnlyModelViewSet):
 
     @detail_route()
     def records(self, request, pk=None):
-        queryset = Record.objects.filter(dataset__pk=pk)
-        serializer = RecordListSerializer(self.paginate_queryset(queryset),
-                                          context={'request':request},
-                                          many=True)
-        return self.get_paginated_response(serializer.data)
+        return NestedViewSetRecordList(
+            view=self,
+            request=request,
+            qs_filter={'dataset__pk': pk}
+        ).response
 
 
 class SectorViewSet(viewsets.ReadOnlyModelViewSet):
     @detail_route()
     def summaries(self, request, pk=None):
-        queryset = Summary.objects.filter(sector__pk=pk)
-        serializer = SummaryListSerializer(self.paginate_queryset(queryset),
-                                           context={'request':request},
-                                           many=True)
-        return self.get_paginated_response(serializer.data)
+        return NestedViewSetSummaryList(
+            view=self,
+            request=request,
+            qs_filter={'sector__pk': pk}
+        ).response
 
 
 class CountyViewSet(SectorViewSet):
@@ -52,17 +58,49 @@ class CountyViewSet(SectorViewSet):
     serializer_class = CountySerializer
     filter_class = CountyFilter
 
+    @detail_route()
+    def districts(self, request, pk=None):
+        return NestedViewSetDistrictList(
+            view=self,
+            request=request,
+            qs_filter={'county__pk': pk}
+        ).response
+
+    @detail_route()
+    def schools(self, request, pk=None):
+        return NestedViewSetSchoolList(
+            view=self,
+            request=request,
+            qs_filter={'county__pk': pk}
+        ).response
+
 
 class DistrictViewSet(SectorViewSet):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
     filter_class = DistrictFilter
 
+    @detail_route()
+    def schools(self, request, pk=None):
+        return NestedViewSetSchoolList(
+            view=self,
+            request=request,
+            qs_filter={'district__pk': pk}
+        ).response
+
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
     filter_class = SchoolFilter
+
+    @detail_route()
+    def records(self, request, pk=None):
+        return NestedViewSetRecordList(
+            view=self,
+            request=request,
+            qs_filter={'school__pk': pk}
+        ).response
 
 
 class RecordViewSet(viewsets.ReadOnlyModelViewSet):
