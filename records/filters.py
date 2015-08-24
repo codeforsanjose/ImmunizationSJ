@@ -1,21 +1,23 @@
 import django_filters
 
+from base.filters import BaseFilterSet
+
 from data.models import Dataset, County, District, School, Record, Summary
 
 
-class DatasetFilter(django_filters.FilterSet):
+class DatasetFilter(BaseFilterSet):
     class Meta:
         model = Dataset
         fields = ('year', 'grade',)
 
 
-class CountyFilter(django_filters.FilterSet):
+class CountyFilter(BaseFilterSet):
     class Meta:
         model = County
         fields = ('name',)
 
 
-class DistrictFilter(django_filters.FilterSet):
+class DistrictFilter(BaseFilterSet):
     county = django_filters.CharFilter(name='county__name')
 
     class Meta:
@@ -23,7 +25,7 @@ class DistrictFilter(django_filters.FilterSet):
         fields = ('name', 'county',)
 
 
-class SchoolFilter(django_filters.FilterSet):
+class SchoolFilter(BaseFilterSet):
     county = django_filters.CharFilter(name='county__name')
     district = django_filters.CharFilter(name='district__name')
 
@@ -32,7 +34,7 @@ class SchoolFilter(django_filters.FilterSet):
         fields = ('code', 'name', 'county', 'public', 'district', 'city',)
 
 
-class RecordFilter(django_filters.FilterSet):
+class RecordFilter(BaseFilterSet):
     year = django_filters.NumberFilter(name='dataset__year')
     grade = django_filters.CharFilter(name='dataset__grade')
     school = django_filters.CharFilter(name='school__name')
@@ -44,7 +46,7 @@ class RecordFilter(django_filters.FilterSet):
         fields = ('year', 'grade', 'school', 'county', 'district', 'reported',)
 
 
-class SummaryFilter(django_filters.FilterSet):
+class SummaryFilter(BaseFilterSet):
     year = django_filters.NumberFilter(name='dataset__year')
     grade = django_filters.CharFilter(name='dataset__grade')
     sector = django_filters.CharFilter(name='sector__name')
