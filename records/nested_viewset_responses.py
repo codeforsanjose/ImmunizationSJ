@@ -3,33 +3,33 @@ from base.nested_viewset_responses import NestedViewSetList
 from data.models import District, School, Record, Summary
 
 from .serializers import (
-    DistrictSerializer,
-    SchoolSerializer,
-    RecordListSerializer,
-    SummaryListSerializer
+    DistrictCompactSerializer,
+    SchoolCompactSerializer,
+    RecordCompactSerializer,
+    SummaryCompactSerializer
 )
 from .filters import DistrictFilter, SchoolFilter, RecordFilter, SummaryFilter
 
 
 class NestedViewSetDistrictList(NestedViewSetList):
     model = District
-    serializer_class = DistrictSerializer
+    serializer_class = DistrictCompactSerializer
     filter_class = DistrictFilter
 
 
 class NestedViewSetSchoolList(NestedViewSetList):
     model = School
-    serializer_class = SchoolSerializer
+    serializer_class = SchoolCompactSerializer
     filter_class = SchoolFilter
 
 
 class NestedViewSetRecordList(NestedViewSetList):
     model = Record
-    serializer_class = RecordListSerializer
+    serializer_class = RecordCompactSerializer
     filter_class = RecordFilter
 
 
 class NestedViewSetSummaryList(NestedViewSetList):
     model = Summary
-    serializer_class = SummaryListSerializer
+    serializer_class = SummaryCompactSerializer
     filter_class = SummaryFilter

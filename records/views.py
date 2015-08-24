@@ -1,6 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 
+from base.viewsets import RetrieveOnlyModelViewSet
+
 from data.models import Dataset, County, District, School, Record, Summary
 
 from .serializers import (
@@ -8,18 +10,16 @@ from .serializers import (
     CountySerializer,
     DistrictSerializer,
     SchoolSerializer,
-    RecordListSerializer,
-    RecordDetailSerializer,
-    SummaryListSerializer,
-    SummaryDetailSerializer
+    RecordCompactSerializer,
+    RecordSerializer,
+    SummarySerializer
 )
 from .filters import (
     DatasetFilter,
     CountyFilter,
     DistrictFilter,
     SchoolFilter,
-    RecordFilter,
-    SummaryFilter
+    RecordFilter
 )
 from .nested_viewset_responses import (
     NestedViewSetDistrictList,
@@ -108,14 +108,10 @@ class RecordViewSet(viewsets.ReadOnlyModelViewSet):
     filter_class = RecordFilter
 
     def get_serializer_class(self):
-        return RecordListSerializer if self.action == 'list' else \
-            RecordDetailSerializer
+        return RecordCompactSerializer if self.action == 'list' else \
+            RecordSerializer
 
 
-class SummaryViewSet(viewsets.ReadOnlyModelViewSet):
+class SummaryViewSet(RetrieveOnlyModelViewSet):
     queryset = Summary.objects.all()
-    filter_class = SummaryFilter
-
-    def get_serializer_class(self):
-        return SummaryListSerializer if self.action == 'list' else \
-            SummaryDetailSerializer
+    serializer_class = SummarySerializer
