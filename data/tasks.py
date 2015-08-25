@@ -46,6 +46,43 @@ def update_datasets():
 def get_field_mappings(f):
     return {v: k for k, v in FieldsMapSerializer(f).data.iteritems() if v}
 
+def serialize_to_objects(data):
+    # Create county
+    county_serializer = CountySerializer(data=data)
+    county_serializer.is_valid(raise_exception=True)
+    county, _ = County.objects.get_or_create(
+        **county_serializer.validated_data)
+
+    # Create school in the above county
+    school_serializer = SchoolSerializer(data=data)
+    school_serializer.is_valid(raise_exception=True)
+    school, _ = School.objects.get_or_create(
+        defaults=school_serializer.validated_data,
+        code=school_serializer.validated_data['code'],
+        county=county
+    )
+
+    # Create a district as well, if possible
+    district_serializer = DistrictSerializer(data=data)
+    # No need to raise exception here since this is an optional field
+    if district_serializer.is_valid():
+        district, _ = District.objects.get_or_create(
+            county=county,
+            **district_serializer.validated_data
+        )
+        # Save district to school
+        school.district = district
+        school.save()
+
+    ## Finally create record
+    record_serializer = RecordSerializer(data=data)
+    record_serializer.is_valid(raise_exception=True)
+    Record.objects.update_or_create(
+        defaults=record_serializer.validated_data,
+        dataset=dataset,
+        school=school
+    )
+
 def source_dataset(dataset):
     # Build dataset-specific mappings for field names
     mappings = get_field_mappings(dataset.fields_map)
@@ -54,41 +91,8 @@ def source_dataset(dataset):
         # Apply field name mappings
         data = {mappings.get(k, k): v for k, v in entry.iteritems() if v}
 
-        # Create county
-        county_serializer = CountySerializer(data=data)
-        county_serializer.is_valid(raise_exception=True)
-        county, _ = County.objects.get_or_create(
-            **county_serializer.validated_data)
-
-        # Create school in the above county
-        school_serializer = SchoolSerializer(data=data)
-        school_serializer.is_valid(raise_exception=True)
-        school, _ = School.objects.get_or_create(
-            defaults=school_serializer.validated_data,
-            code=school_serializer.validated_data['code'],
-            county=county
-        )
-
-        # Create a district as well, if possible
-        district_serializer = DistrictSerializer(data=data)
-        # No need to raise exception here since this is an optional field
-        if district_serializer.is_valid():
-            district, _ = District.objects.get_or_create(
-                county=county,
-                **district_serializer.validated_data
-            )
-            # Save district to school
-            school.district = district
-            school.save()
-
-        ## Finally create record
-        record_serializer = RecordSerializer(data=data)
-        record_serializer.is_valid(raise_exception=True)
-        Record.objects.update_or_create(
-            defaults=record_serializer.validated_data,
-            dataset=dataset,
-            school=school
-        )
+        # Create the necessary model instances from the data dict
+        serialize_to_objects(data)
 
 def summarize_df(df):
     # All pandas-friendly summarizations go here.
