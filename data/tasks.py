@@ -29,6 +29,7 @@ __SECTOR_TYPES__ = [
 ]
 __SUMMARIZE_FIELDS__ = [i.name for i in StatFieldsMixin._meta.fields]
 
+@shared_task
 def update_datasets():
     api = CdphMigrations()
     for d in Dataset.objects.all():
@@ -46,7 +47,7 @@ def update_datasets():
 def get_field_mappings(f):
     return {v: k for k, v in FieldsMapSerializer(f).data.iteritems() if v}
 
-def serialize_to_objects(data):
+def serialize_to_objects(dataset, data):
     # Create county
     county_serializer = CountySerializer(data=data)
     county_serializer.is_valid(raise_exception=True)
@@ -56,7 +57,7 @@ def serialize_to_objects(data):
     # Create school in the above county
     school_serializer = SchoolSerializer(data=data)
     school_serializer.is_valid(raise_exception=True)
-    school, _ = School.objects.get_or_create(
+    school, _ = School.objects.update_or_create(
         defaults=school_serializer.validated_data,
         code=school_serializer.validated_data['code'],
         county=county
@@ -92,7 +93,7 @@ def source_dataset(dataset):
         data = {mappings.get(k, k): v for k, v in entry.iteritems() if v}
 
         # Create the necessary model instances from the data dict
-        serialize_to_objects(data)
+        serialize_to_objects(dataset, data)
 
 def summarize_df(df):
     # All pandas-friendly summarizations go here.
