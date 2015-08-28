@@ -1,7 +1,7 @@
 import requests
 import xmltodict
 
-BASE_API_URL = 'https://cdph.data.ca.gov/api/'
+BASE_API_URL = 'https://cdph.data.ca.gov/'
 
 
 class CdphError(Exception):
@@ -29,16 +29,15 @@ class CdphAPI(object):
 
 
 class CdphViews(CdphAPI):
-    endpoint = 'views/{uid}/rows.xml'
+    endpoint = 'resource/{uid}.json?$limit=50000'
 
     def get_content(self, uid):
         response = self._request(uid)
-        xml = xmltodict.parse(response.text)
-        return xml['response']['row']['row']
+        return response.json()
 
 
 class CdphMigrations(CdphAPI):
-    endpoint = 'migrations/{uid}.json'
+    endpoint = 'api/migrations/{uid}.json'
 
     def _next_update(self, uid):
         response = self._request(uid)
