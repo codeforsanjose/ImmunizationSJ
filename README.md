@@ -1,4 +1,4 @@
-# immunizationSJ
+# immunizationSJ (deprecated - new information to follow...)
 
 The current implementation uses [Flask](http://flask.pocoo.org/) as a basic web framework for displaying the results from the database. The database is populated from data originating in an Excel file which has been converted to CSV format which has then been input into `csv_to_sql.py` and `db_utils.py`.
 
