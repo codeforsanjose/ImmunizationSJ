@@ -1,4 +1,4 @@
 .DS_Store
-~$*.xlsx
-venv
 *.pyc
+*.sqlite3
+migrations/
