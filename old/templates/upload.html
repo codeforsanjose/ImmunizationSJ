@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Upload</h2>
+  {% if error %}<p class="error"><strong>Error:</strong> {{ error }}{% endif %}
+  {% if filename %}
+    <p>{{ filename }} uploaded!</p>
+  {% else %}
+    <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+      <dl>
+        <dt>Grade:</dt>
+        <dd>
+          <select name="grade">
+            <option value="K" selected>Kindergarten</option>
+            <option value="7">7th</option>
+          </select>
+        </dd>
+        <dt>Year:</dt>
+        <dd><input type="number" min=1950 max=2099 name="year"></dd>
+        <dt>Filename:</dt>
+        <dd><input type="file" name="file"></dd>
+      </dl>
+      <input type="submit" value="Upload">
+    </form>
+  {% endif %}
+{% endblock %}
