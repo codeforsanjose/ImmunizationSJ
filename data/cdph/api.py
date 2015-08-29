@@ -1,5 +1,4 @@
 import requests
-import xmltodict
 
 BASE_API_URL = 'https://cdph.data.ca.gov/'
 
