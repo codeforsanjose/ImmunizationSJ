@@ -3,7 +3,7 @@ from celery import shared_task
 from django.db import transaction
 from django.utils import timezone
 
-from .cdph.api import CdphViews, CdphMigrations
+from .api.cdph import CdphViews, CdphMigrations
 from .models import (
     Dataset,
     Sector,
