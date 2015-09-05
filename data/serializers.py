@@ -18,6 +18,15 @@ class CapitalizedCharField(serializers.CharField):
         return value.strip() if self.trim_whitespace else value
 
 
+class CDECodeField(serializers.CharField):
+    # CDE school codes are a maximum of 7 digits long
+    # When coercing a child care facility number to a CDE school code,
+    # only use the last 7 digits.
+    def to_internal_value(self, data):
+        value = six.text_type(data)[-7:]
+        return value.strip() if self.trim_whitespace else value
+
+
 class LazyBooleanField(serializers.BooleanField):
     TRUE_CASE_INSENSITIVE_REGEX = r''
 
@@ -51,7 +60,7 @@ class CdeSchoolModeField(SchoolTypeField):
 
 
 class CdeSchoolSearchInput(serializers.Serializer):
-    code = serializers.CharField(source='cds_code')
+    code = CDECodeField(source='cds_code')
     city = FormattedCharField()
     public = CdeSchoolModeField(source='mode')
     status = serializers.CharField(max_length=1)

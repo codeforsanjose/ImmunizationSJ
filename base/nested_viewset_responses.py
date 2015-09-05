@@ -8,6 +8,7 @@ class NestedViewSetList(object):
     filter_backends = api_settings.DEFAULT_FILTER_BACKENDS
 
     def __init__(self, view, request, qs_filter=None):
+        super(NestedViewSetList, self).__init__()
         self.view = view
         self.request = request
         self.qs_filter = qs_filter or {}

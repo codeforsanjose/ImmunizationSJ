@@ -4,7 +4,7 @@ from geopy.geocoders import GoogleV3
 
 from .api.cdph import CdphViews, CdphMigrations
 from .api.cde import CdeSchoolSearch
-from .api.cdss import CdssFacilitySearch
+from .api.cc import ChildCareFacilitySearch
 from .models import (
     Dataset,
     Sector,
@@ -33,9 +33,10 @@ __SUMMARIZE_FIELDS__ = [i.name for i in StatFieldsMixin._meta.fields]
 
 class DatasetReader(object):
     def __init__(self, dataset):
+        super(DatasetReader, self).__init__()
         self._dataset = dataset
         self._search_form = (
-            CdssFacilitySearch()
+            ChildCareFacilitySearch()
             if self._dataset.grade == 'CC'
             else CdeSchoolSearch()
         )
