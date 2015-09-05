@@ -1,7 +1,11 @@
 from lxml import html
+from data.serializers import CdeSchoolSearchInput
 from .generics import ExternalAPI, SearchFormMixin, SearchResult
-from .serializers import CdeSchoolSearchInput
 from .decorators import field
+
+# Constants for status of schools
+STATUS_ACTIVE_PENDING = 1
+STATUS_ALL = 5
 
 
 class CdeAPI(ExternalAPI):
@@ -55,7 +59,7 @@ class CdeSchoolSearch(SearchFormMixin, CdeAPI):
     form_timeout = 600 #10 minutes
     input_serializer_class = CdeSchoolSearchInput
 
-    def get_search_results(self, **field_values):
+    def _try_search(self, **field_values):
         # Get and update the form
         form, form_page = self.get_form()
         self.update_form(form, field_values)
@@ -67,4 +71,10 @@ class CdeSchoolSearch(SearchFormMixin, CdeAPI):
             headers={'Cookie': form_page.headers.get('set-cookie', None)},
             data=dict(form.form_values())
         )
-        return CdeSchoolSearchResult(submit.text).to_dict()
+        return CdeSchoolSearchResult(submit.text)
+
+    def get_search_results(self, **field_values):
+        for status in (STATUS_ACTIVE_PENDING, STATUS_ALL,):
+            result = self._try_search(status=status, **field_values)
+            if result.is_valid():
+                return result.to_dict()

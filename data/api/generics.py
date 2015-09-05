@@ -119,6 +119,9 @@ class SearchResult(object):
             % self.__class__.__name__
         )
 
+    def is_valid(self):
+        return bool(self._details)
+
     def get_fields(self):
         for i in dir(self):
             attr = getattr(self, i)

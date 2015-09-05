@@ -83,7 +83,11 @@ class School(models.Model):
                                  null=True,
                                  related_name='schools')
 
-    # Add school geolocation information
+    # School information
+    phone = models.CharField(max_length=15)
+    address = models.CharField(max_length=255)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
 
     def __unicode__(self):
         return self.name

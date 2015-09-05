@@ -28,6 +28,26 @@ class ReportedField(LazyBooleanField):
     TRUE_CASE_INSENSITIVE_REGEX = r'(y|yes)'
 
 
+class CdeSchoolModeField(SchoolTypeField):
+    def to_internal_value(self, data):
+        return (
+            '1'
+            if super(CdeSchoolModeField, self).to_internal_value(data)
+            else '3'
+        )
+
+
+class CdeSchoolSearchInput(serializers.Serializer):
+    code = serializers.CharField(source='cds_code')
+    city = serializers.CharField()
+    public = CdeSchoolModeField(source='mode')
+    status = serializers.CharField(max_length=1)
+
+
+class CdssFacilitySearchInput(serializers.Serializer):
+    code = serializers.CharField(source='facnum')
+
+
 class FieldsMapSerializer(serializers.ModelSerializer):
     class Meta:
         model = FieldsMap

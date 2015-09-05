@@ -1,6 +1,6 @@
 from lxml import html
+from data.serializers import CdssFacilitySearchInput
 from .generics import ExternalAPI, SearchFormMixin, SearchResult
-from .serializers import CdssFacilitySearchInput
 from .decorators import field
 
 
@@ -58,4 +58,7 @@ class CdssFacilitySearch(SearchFormMixin, CdssAPI):
 
         # Finally submit the form
         submit = html.submit_form(form)
-        return CdssFacilitySearchResult(submit).to_dict()
+
+        result = CdssFacilitySearchResult(submit)
+        if result.is_valid():
+            return result.to_dict()
