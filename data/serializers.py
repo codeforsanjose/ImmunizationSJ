@@ -1,8 +1,21 @@
 import re
 
+from django.utils import six
 from rest_framework import serializers
 
 from .models import FieldsMap, County, District, School, Record
+
+
+class FormattedCharField(serializers.CharField):
+    def to_internal_value(self, data):
+        value = six.text_type(data).title()
+        return value.strip() if self.trim_whitespace else value
+
+
+class CapitalizedCharField(serializers.CharField):
+    def to_internal_value(self, data):
+        value = six.text_type(data).upper()
+        return value.strip() if self.trim_whitespace else value
 
 
 class LazyBooleanField(serializers.BooleanField):
@@ -39,7 +52,7 @@ class CdeSchoolModeField(SchoolTypeField):
 
 class CdeSchoolSearchInput(serializers.Serializer):
     code = serializers.CharField(source='cds_code')
-    city = serializers.CharField()
+    city = FormattedCharField()
     public = CdeSchoolModeField(source='mode')
     status = serializers.CharField(max_length=1)
 
@@ -55,7 +68,7 @@ class FieldsMapSerializer(serializers.ModelSerializer):
 
 
 class CountySerializer(serializers.ModelSerializer):
-    county = serializers.CharField(source='name')
+    county = FormattedCharField(source='name')
 
     class Meta:
         model = County
@@ -63,7 +76,7 @@ class CountySerializer(serializers.ModelSerializer):
 
 
 class DistrictSerializer(serializers.ModelSerializer):
-    district = serializers.CharField(source='name')
+    district = FormattedCharField(source='name')
 
     class Meta:
         model = District
@@ -71,6 +84,9 @@ class DistrictSerializer(serializers.ModelSerializer):
 
 
 class SchoolSerializer(serializers.ModelSerializer):
+    name = FormattedCharField()
+    address = CapitalizedCharField()
+    city = FormattedCharField()
     public = SchoolTypeField(default=False)
 
     class Meta:
