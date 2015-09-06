@@ -2,6 +2,7 @@ import logging
 
 from django.db import transaction
 from django.utils import timezone
+from collections import defaultdict
 from geopy.geocoders import GoogleV3
 
 from .api.cdph import CdphViews, CdphMigrations
@@ -51,14 +52,10 @@ class DatasetReader(object):
         data.update(kwargs)
 
     @staticmethod
-    def _make_err_msg(message, data):
-        return (
-            message + '\n' +
-            '\n'.join(
-                ('{key}: {value}').format(key=key.title(), value=value)
-                for key, value in data.iteritems()
-            )
-        )
+    def _log(level, message, **kwargs):
+        d = defaultdict(lambda: None)
+        d.update(kwargs)
+        logger.log(level, message % d)
 
     @property
     def _latest(self):
@@ -108,10 +105,14 @@ class DatasetReader(object):
             try:
                 self._serialize_to_objects(data)
             except Exception, e:
-                logger.error(self._make_err_msg(
-                    'Could not serialize record',
-                    data
-                ))
+                self._log(
+                    logging.ERROR,
+                    'Error while serializing record: '
+                    '<Name: %(name)s, Code: %(code)s> - '
+                    '%(error)s',
+                    error=e,
+                    **data
+                )
                 raise
 
         self._cache_summaries()
@@ -123,10 +124,14 @@ class DatasetReader(object):
     def _update_school_info(self, data):
         info = self._search_form.get_search_results(**data)
         if not info:
-            logger.warning(self._make_err_msg(
-                'Could not find information for School',
-                data
-            ))
+            self._log(
+                logging.WARNING,
+                'No information found for school: '
+                '<Name: %(name)s, Code: %(code)s, '
+                'City: %(city)s, County: %(county)s, '
+                'Type: %(public)s>',
+                **data
+            )
             return False
 
         address = info.get('address', None)
@@ -223,4 +228,6 @@ class DatasetReader(object):
             with transaction.atomic():
                 self._source()
         except Exception, e:
-            logger.exception(e)
+            logger.exception(
+                'Error while importing dataset: %s' % unicode(self._dataset)
+            )
