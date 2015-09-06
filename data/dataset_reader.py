@@ -1,3 +1,5 @@
+import logging
+
 from django.db import transaction
 from django.utils import timezone
 from geopy.geocoders import GoogleV3
@@ -23,6 +25,8 @@ from .serializers import (
     RecordSerializer
 )
 
+logger = logging.getLogger(__name__)
+
 __SECTOR_TYPES__ = [
     i.related_model
     for i in Sector._meta.get_all_related_objects()
@@ -46,6 +50,16 @@ class DatasetReader(object):
     def _update_data(data, **kwargs):
         data.update(kwargs)
 
+    @staticmethod
+    def _make_err_msg(message, data):
+        return (
+            message + '\n' +
+            '\n'.join(
+                ('{key}: {value}').format(key=key.title(), value=value)
+                for key, value in data.iteritems()
+            )
+        )
+
     @property
     def _latest(self):
         return CdphMigrations().get_latest_dataset(self._dataset.uid)
@@ -66,6 +80,8 @@ class DatasetReader(object):
     def _update(self):
         uid, updated = self._latest
         if updated:
+            logger.info('Update found for %s.' % unicode(self._dataset))
+
             self._dataset.uid = uid
             self._dataset.queued_date = timezone.now()
             self._dataset.sourced = False
@@ -74,6 +90,8 @@ class DatasetReader(object):
     def _source(self):
         if self._dataset.sourced:
             return
+
+        logger.info('Importing data for %s.' % unicode(self._dataset))
 
         # Build dataset-specific mappings for field names
         mappings = self._field_mappings
@@ -87,16 +105,28 @@ class DatasetReader(object):
                 continue
 
             # Create the necessary model instances from the data dict
-            self._serialize_to_objects(data)
+            try:
+                self._serialize_to_objects(data)
+            except Exception, e:
+                logger.error(self._make_err_msg(
+                    'Could not serialize record',
+                    data
+                ))
+                raise
 
         self._cache_summaries()
         self._dataset.sourced = True
         self._dataset.save()
 
+        logger.info('Imported data for %s.' % unicode(self._dataset))
+
     def _update_school_info(self, data):
         info = self._search_form.get_search_results(**data)
         if not info:
-            # Log invalid school
+            logger.warning(self._make_err_msg(
+                'Could not find information for School',
+                data
+            ))
             return False
 
         address = info.get('address', None)
@@ -192,6 +222,5 @@ class DatasetReader(object):
             # Commit each dataset as a whole
             with transaction.atomic():
                 self._source()
-        except:
-            # Add logging here
-            pass
+        except Exception, e:
+            logger.exception(e)

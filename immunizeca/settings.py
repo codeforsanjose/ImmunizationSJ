@@ -120,3 +120,34 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Logging
+
+LOG_DIR = os.path.join(BASE_DIR, 'logs')
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'data_import': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'data_import.log'),
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'data': {
+            'handlers': ['data_import'],
+            'level': 'INFO',
+        },
+    }
+}
