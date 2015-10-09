@@ -1,19 +1,7 @@
-# immunizationSJ (deprecated - new information to follow...)
+# immunizationSJ
+The current implementation uses [Django](https://www.djangoproject.com/) as a web framework for displaying the results from the database. The database is populated from data originating from [data.ca.gov](https://cdph.data.ca.gov/).
 
-The current implementation uses [Flask](http://flask.pocoo.org/) as a basic web framework for displaying the results from the database. The database is populated from data originating in an Excel file which has been converted to CSV format which has then been input into `csv_to_sql.py` and `db_utils.py`.
-
-## Preparing the Excel file for export to CSV
-
-The provided Excel spreadsheets contain headers which span multiple columns. They also contain Unicode characters which do not readily transfer over to JSON or HTML without additional work or configuration.
-
-The column headers should be changed and title information leading up to the actual rows of data should be removed, in addition to the symbol legend which is at the very bottom of the data set. The current column header titles can be seen in the `2014-15 CA Kindergarten Data.csv` file, and are:
-
-    SCHOOL CODE,COUNTY,PUBLIC  PRIVATE,PUBLIC SCHOOL DISTRICT,CITY,SCHOOL NAME,ENROLLMENT,# UP-TO-DATE,% UP-TO-DATE,# CONDITIONAL,% CONDITIONAL,# PME,% PME,# PBE,% PBE,# PRE-JAN PBE,% PRE-JAN PBE,# HEALTH CARE PRACTITIONER COUNSELED PBE,% HEALTH CARE PRACTITIONER COUNSELED PBE,# RELIGIOUS PBE,% RELIGIOUS PBE,# DTP,% DTP,# POLIO,% POLIO,# MMR,% MMR,# HEPB,% HEPB,# VARI,% VARI,REPORTED
-
-The file can then be saved or exported as a CSV that is ready for the next step.
-
-##Using virtualenv (optional)
-
+## Using virtualenv (optional)
 Install virtualenv via pip:
 
     $ pip install virtualenv
@@ -29,28 +17,40 @@ To begin using the virtual environment, it needs to be activated:
 
     . venv/bin/activate
 
+## Setup development environment
 The name immunizationSJ will now appear on the left of the prompt (e.g. (venv)Your-Computer:immunizationSJ UserName$) to let you know that it’s active. From now on, any package that you install using pip will be placed in the venv folder, isolated from the global Python installation.
 
-Now install flask:
-    pip install flask    
+Now install django and all the required packages:
+    pip install -r requirements.txt
 
 ## Create the database
-Run the provided `db_utils.py` utility program with the `create` option:
+Run the Django commands for making the database:
+    $ python manage.py syncdb
+    $ python manage.py makemigrations
+    $ python manage.py migrate
 
-    python db_utils.py create
+Once that's done, create a superuser for yourself, the following is fine, as this is just for your own use:
+    username : admin
+    password : password
 
-## Populate the database with the CSV data
-Run the provided `csv_to_sql.py` utility program, giving arguments for the appropriate input file (-i), year (-y), and grade (-g):
+## Populate the database
+(more information to come here)
 
-    python csv_to_sql.py -i data/2014-15\ CA\ Kindergarten\ Data.csv -y 2014 -g K
+## Start the development server
+Start the Django application by using the `runserver` option in manage.py:
 
-## Run the app
+    $ python manage.py runserver
 
-Start the Flask application by running `app.py`:
+With this running, open a web browser to [http://127.0.0.1:8000/](http://127.0.0.1:8000/). You should be greeted with the main page, and you should be able to get to the admin console at [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin), and login with the superuser account you created earlier.
 
-    python app.py
+## Populate the database
+First, find a dataset you want to look at, like the [Kindergarten 2014-2015 Immunizations dataset](https://cdph.data.ca.gov/Healthcare/School-Immunizations-In-Kindergarten-2014-2015/4y8p-xn54) and find the SODA API endpoint under `export`>`SODA API`. The endpoint will look like this:
+    https://cdph.data.ca.gov/resource/4y8p-xn54.json
+The UID we need is the part before `.json`, in this case, it's `4y8p-xn54`. In the Django administration console, create a new dataset, using that UID and fill in all the fields that are available for that dataset, as they correspond to the fields shown in the SODA API tab below where the endpoint was located. Not all of the fields will be present, like `Hib`. Once you have this filled in and saved, stop the development webserver.
 
-With this running, open a web browser to [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
+Now go into the Django shell and run the update_db function:
+    $ python manage.py shell
+    >>> from data.tasks import update_db; update_db();
 
 ## Screenshots
 
